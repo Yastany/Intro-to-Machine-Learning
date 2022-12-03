@@ -24,14 +24,14 @@ X = home_data[features]
 # 訓練データとテストデータの分割
 train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
 
-# 学習モデル(決定木)の定義とフィッティング
-iowa_model = DecisionTreeRegressor(random_state=1)
-iowa_model.fit(train_X, train_y)
+# # 学習モデル(決定木)の定義とフィッティング
+# iowa_model = DecisionTreeRegressor(random_state=1)
+# iowa_model.fit(train_X, train_y)
 
-# 予測精度検証と平均絶対値誤差(MAE)の計算
-val_predictions = iowa_model.predict(val_X)
-val_mae = mean_absolute_error(val_predictions, val_y)
-print("Validation MAE: {:,.0f}".format(val_mae))
+# # 予測精度検証と平均絶対値誤差(MAE)の計算
+# val_predictions = iowa_model.predict(val_X)
+# val_mae = mean_absolute_error(val_predictions, val_y)
+# print("Validation MAE: {:,.0f}".format(val_mae))
 
 
 # learntoolsのセットアップ確認
@@ -41,11 +41,22 @@ print("Validation MAE: {:,.0f}".format(val_mae))
 # print("\nSetup complete")
 
 
-# 関数の定義
-def get_mae(leaf_size, train_X, val_X, train_y, val_y):
-    model = DecisionTreeRegressor(leaf_size = candidate_max_leaf_nodes, random_state=1)
+# 関数の定義(学習モデルの定義とフィッティング)
+def get_mae(candidate_max_leaf_nodes, train_X, val_X, train_y, val_y):
+    model = DecisionTreeRegressor(max_leaf_nodes = candidate_max_leaf_nodes, random_state=1)
     model.fit(train_X, train_y)
     preds_val = model.predict(val_X)
     mae = mean_absolute_error(val_y, preds_val)
     return(mae)
-print ("関数の定義完了" )
+
+
+# 最適なツリーのノード数の決定/モデルパラメータ最適化
+candidate_max_leaf_nodes = [5, 25, 50, 100, 250, 500]
+scores = {leaf_size : get_mae(leaf_size, train_X, val_X, train_y, val_y) for leaf_size in candidate_max_leaf_nodes}
+best_tree_size = min(scores, key=scores.get)
+print("\nノード数の候補は:" + str(candidate_max_leaf_nodes))
+print("最適なツリーのノード数は:" + str(best_tree_size))
+
+final_model = DecisionTreeRegressor(max_leaf_nodes=best_tree_size, random_state=1)
+final_model.fit(X, y)
+print(">>> モデルパラメータ最適化完了")
