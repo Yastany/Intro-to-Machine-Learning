@@ -4,6 +4,7 @@
 # 日付:2022/12/03
 ##############################
 
+
 # ライブラリの読み出し
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
@@ -41,7 +42,7 @@ train_X, val_X, train_y, val_y = train_test_split(X, y, random_state=1)
 # print("\nSetup complete")
 
 
-# 関数の定義(学習モデルの定義とフィッティング)
+# 関数の定義(決定木モデルの定義とフィッティング)
 def get_mae(candidate_max_leaf_nodes, train_X, val_X, train_y, val_y):
     model = DecisionTreeRegressor(max_leaf_nodes = candidate_max_leaf_nodes, random_state=1)
     model.fit(train_X, train_y)
